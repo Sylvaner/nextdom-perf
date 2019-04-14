@@ -1,0 +1,10 @@
+language: php
+php:
+    - 7.1
+services:
+    - docker
+before_script:
+    - docker pull sylvaner1664/nextdom-dev
+script:
+    - ./start.sh
+    - php compare.php
