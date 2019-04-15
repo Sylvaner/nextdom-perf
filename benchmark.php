@@ -36,51 +36,13 @@
 		jeeObject::buildTree();
 	}
 
-	function test_cache_write() {
-		cache::set('jeedom_benchmark', 1);
+	function test_evaluateExpression() {
+		jeedom::evaluateExpression('(1 == 2 || 3 == "a") AND "c" < "4"');
 	}
 
-	function test_cache_read() {
-		$cache = cache::byKey('jeedom_benchmark');
-		$cache->getValue();
-	}
-
-	function test_database_write_delete() {
-		$sql = 'DELETE FROM config
-				WHERE `key`="jeedom_benchmark"
-				AND plugin="core"';
-		try {
-			DB::Prepare($sql, array(), DB::FETCH_TYPE_ROW);
-		} catch (Exception $e) {
-			
-		}
-		$sql = 'INSERT INTO config
-		SET `key`="jeedom_benchmark",plugin="core",`value`="1"';
-		try {
-			DB::Prepare($sql, array(), DB::FETCH_TYPE_ROW);
-		} catch (Exception $e) {
-			
-		}
-	}
-
-	function test_database_update() {
-		$sql = 'UPDATE config
-				SET `value`=:value
-				WHERE `key`="jeedom_benchmark"
-				AND plugin="core"';
-		try {
-			DB::Prepare($sql, array('value' => 1), DB::FETCH_TYPE_ROW);
-		} catch (Exception $e) {
-			
-		}
-	}
-
-	function test_database_replace() {
-		config::save('jeedom_benchmark', 1);
-	}
-
-	function test_database_read() {
-		config::byKey('jeedom_benchmark');
+	function test_getTypeUse() {
+		global $getTypeUseString;
+		jeedom::getTypeUse($getTypeUseString);
 	}
 
 	$testsList = [
@@ -98,16 +60,16 @@
 			'jeeObject::getRootObjects' => 'test_jeeobject_get_root_objects',
 			'jeeObject::buildTree' => 'test_jeeobject_build_tree'
 		],
-		'Jeedom' => [
-			'cacheWrite' => 'test_cache_write',
-			'cacheRead' => 'test_cache_read',
-			'databaseWriteDelete' => 'test_database_write_delete',
-			'databaseUpdate' => 'test_database_update',
-			'databaseReplace' => 'test_database_replace',
-			'databaseRead' => 'test_database_read'
+		'Jeedom functions' => [
+			'evaluateExpression' => 'test_evaluateExpression',
+			'getTypeUse' => 'test_getTypeUse'
 		]
 	];
-	
+
+	// Get somes datas
+	$cmds = cmd::all();
+	$eqLogics = eqLogic::all();
+	$getTypeUseString = 'Test"eqLogic":"' . $eqLogics[2]->getId() . '"#'.$cmds[0]->getId().'#,#eqLogic'.$eqLogics[0]->getId().'##eqLogic' . $eqLogics[1]->getId() . '#';
 	// Init result array
 	$results = [];
 	foreach ($testsList as $testTitle => $testsData) {
